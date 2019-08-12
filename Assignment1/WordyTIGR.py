@@ -1,13 +1,12 @@
-from TIGr import AbstractDrawer, AbstractParser, AbstractSourceReader
-
-"""These implementations should be replaced,
+"""
+These implementations should be replaced,
 by more flexible, portable and extensible solutions.
 """
+from TIGr import AbstractDrawer, AbstractParser, AbstractSourceReader
 
 
 class Drawer(AbstractDrawer):
     """ Responsible for printing as text what the drawing commands are"""
-
     def select_pen(self, pen_num):
         print(f'Selected pen {pen_num}')
 
@@ -28,10 +27,10 @@ class Drawer(AbstractDrawer):
 
 
 class Parser(AbstractParser):
-
     def parse(self, raw_source):
-        """hard coded parsing like this is a Bad Thing!
-            It is inflexible and has no error checking
+        """
+        Hard coded parsing like this is a Bad Thing!
+        It is inflexible and has no error checking
         """
         self.source = raw_source
         for line in self.source:
@@ -40,6 +39,7 @@ class Parser(AbstractParser):
                 self.data = int(line[2])
             except:
                 self.data = 0
+
             if self.command == 'P':
                 self.drawer.select_pen(self.data)
             if self.command == 'D':
@@ -63,11 +63,11 @@ class Parser(AbstractParser):
 
 
 class SourceReader(AbstractSourceReader):
-    """ responsible for providing source text for parsing and drawing
-        Initiates the Draw use-case.
-        Links to a parser and passes the source text onwards
     """
-
+    Responsible for providing source text for parsing and drawing
+    Initiates the Draw use-case.
+    Links to a parser and passes the source text onwards
+    """
     def go(self):
         self.source.append('P 2 # select pen 2')
         self.source.append('X 5 # go to 5 along')
