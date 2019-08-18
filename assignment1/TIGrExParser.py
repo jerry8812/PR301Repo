@@ -2,38 +2,71 @@ from TIGr import AbstractParser
 
 
 class Parser(AbstractParser):
+    """Parse commands from source or input to drawer.
+
+    Inherits:
+    drawer, source, command, data, parse(raw_source)
+    """
+
+    def __init__(self, drawer):
+        super().__init__(drawer)
+        self.direction_table = {'north': 90,
+                                'east': 0,
+                                'west': 180,
+                                'south': 270}
+        self.commands = {'pen': self.draw_select_pen,
+                         'up': self.draw_pen_up,
+                         'down': self.draw_pen_down,
+                         'north': self.draw_line_data,
+                         'east': self.draw_line_data,
+                         'south': self.draw_line_data,
+                         'west': self.draw_line_data,
+                         'x': self.draw_goto_x,
+                         'y': self.draw_goto_x}
+        self.command_aliases = {'p': 'pen',
+                                'pen': 'pen',
+                                'u': 'up',
+                                'up': 'up',
+                                'd': 'down',
+                                'down': 'down',
+                                'n': 'north',
+                                'north': 'north',
+                                'e': 'east',
+                                'east': 'east',
+                                's': 'south',
+                                'south': 'south',
+                                'w': 'west',
+                                'west': 'west',
+                                'x': 'x',
+                                'y': 'y'}
+
+    def draw_clear(self, data=None):
+        self.drawer.clear()
+
+    def draw_select_pen(self, data):
+        self.drawer.select_pen(data)
+
+    def draw_pen_down(self, data=None):
+        self.drawer.pen_down()
+
+    def draw_pen_up(self, data=None):
+        self.drawer.pen_up()
+
+    def draw_line_data(self, data):
+        self.drawer.draw_line(self.direction_table[self.command_aliases[self.command]], self.data)
+
+    def draw_goto_x(self, data):
+        self.drawer.go_along(data)
+
+    def draw_goto_y(self, data):
+        self.drawer.go_down(data)
+
     def parse(self, raw_source):
-        """
-        Parser
-
-        Inherits:
-        drawer, source, source, command, data, parse(raw_source)
-        """
         self.source = raw_source
-        for line in self.source:
-            self.command = line[0]
-            try:
-                self.data = int(line[2])
-            except:
-                self.data = 0
 
-            if self.command == 'P':
-                self.drawer.select_pen(self.data)
-            if self.command == 'D':
-                self.drawer.pen_down()
-            if self.command == 'G':
-                self.drawer.goto(self.data)
-            if self.command == 'N':
-                self.drawer.draw_line(0, self.data)
-            if self.command == 'E':
-                self.drawer.draw_line(90, self.data)
-            if self.command == 'S':
-                self.drawer.draw_line(180, self.data)
-            if self.command == 'W':
-                self.drawer.draw_line(270, self.data)
-            if self.command == 'X':
-                self.drawer.go_along(self.data)
-            if self.command == 'Y':
-                self.drawer.go_down(self.data)
-            if self.command == 'U':
-                self.drawer.pen_up()
+        for source_index, source_line in enumerate(self.source):
+            self.command = source_line.split(' ', 1)[0].lower()
+
+            if ' ' in source_line:
+                self.data = float(source_line.partition(' ')[2])
+            self.commands[self.command_aliases[self.command]](self.data)

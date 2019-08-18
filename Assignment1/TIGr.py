@@ -1,13 +1,11 @@
-"""
-Tiny Interpreted Graphic = TIGr
+"""Tiny Interpreted Graphics = TIGr
 Keep the interfaces defined below in your work.
 """
 from abc import ABC, abstractmethod
 
 
 class AbstractDrawer(ABC):
-    """
-    Responsible for defining an interface for drawing
+    """Responsible for defining an interface for drawing
     """
     @abstractmethod
     def select_pen(self, pen_num):
@@ -47,8 +45,7 @@ class AbstractParser(ABC):
 
 
 class AbstractSourceReader(ABC):
-    """
-    Responsible for providing source text for parsing and drawing
+    """Responsible for providing source text for parsing and drawing
     Initiates the Draw use-case.
     Links to a parser and passes the source text onwards
     """
