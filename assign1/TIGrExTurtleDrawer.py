@@ -55,4 +55,5 @@ class TurtleDrawer(AbstractDrawer):
         turtle.forward(distance)
 
     def clear(self):
+        print('Cleared drawing')
         turtle.clear()

@@ -13,6 +13,8 @@ import doctest
 class TIGrEx(cmd.Cmd):
     """Main application controller for TIGrEx
 
+    Begin doctest
+
     >>> print('hello')
     hello
     """
@@ -28,6 +30,7 @@ class TIGrEx(cmd.Cmd):
         self.source_reader = None
 
     def setup(self, drawer):
+        # Generic setup for classes
         self.drawer = drawer
         self.parser = Parser(self.drawer)
         self.source_reader = SourceReader(self.parser)
@@ -53,7 +56,8 @@ text, turtle, TKinter
             self.parser.draw_clear()
         except AttributeError as exception:
             if self.drawer is None:
-                print('Please select a drawer before trying to run scripts.')
+                # If no drawer is set then don't allow a command to run
+                print('Please select a drawer before trying to run drawer commands.')
             else:
                 print(exception)
 
@@ -63,8 +67,9 @@ text, turtle, TKinter
         try:
             self.parser.draw_pen_up()
         except AttributeError as exception:
+            # If no drawer is set then don't allow a command to run
             if self.drawer is None:
-                print('Please select a drawer before trying to run scripts.')
+                print('Please select a drawer before trying to run drawer commands.')
             else:
                 print(exception)
 
@@ -74,8 +79,9 @@ text, turtle, TKinter
         try:
             self.parser.draw_pen_down()
         except AttributeError as exception:
+            # If no drawer is set then don't allow a command to run
             if self.drawer is None:
-                print('Please select a drawer before trying to run scripts.')
+                print('Please select a drawer before trying to run drawer commands.')
             else:
                 print(exception)
 
@@ -86,9 +92,12 @@ text, turtle, TKinter
             self.parser.data = int(arg)
             self.parser.command = 'north'
             self.parser.draw_line_data(self.parser.data)
+        except ValueError:
+            print('This command only takes numbers')
         except AttributeError as exception:
+            # If no drawer is set then don't allow a command to run
             if self.drawer is None:
-                print('Please select a drawer before trying to run scripts.')
+                print('Please select a drawer before trying to run drawer commands.')
             else:
                 print(exception)
 
@@ -100,8 +109,9 @@ text, turtle, TKinter
             self.parser.command = 'south'
             self.parser.draw_line_data(self.parser.data)
         except AttributeError as exception:
+            # If no drawer is set then don't allow a command to run
             if self.drawer is None:
-                print('Please select a drawer before trying to run scripts.')
+                print('Please select a drawer before trying to run drawer commands.')
             else:
                 print(exception)
 
@@ -112,9 +122,12 @@ text, turtle, TKinter
             self.parser.data = int(arg)
             self.parser.command = 'east'
             self.parser.draw_line_data(self.parser.data)
+        except ValueError:
+            print('This command only takes numbers')
         except AttributeError as exception:
+            # If no drawer is set then don't allow a command to run
             if self.drawer is None:
-                print('Please select a drawer before trying to run scripts.')
+                print('Please select a drawer before trying to run drawer commands.')
             else:
                 print(exception)
 
@@ -125,9 +138,12 @@ text, turtle, TKinter
             self.parser.data = int(arg)
             self.parser.command = 'west'
             self.parser.draw_line_data(self.parser.data)
+        except ValueError:
+            print('This command only takes numbers')
         except AttributeError as exception:
+            # If no drawer is set then don't allow a command to run
             if self.drawer is None:
-                print('Please select a drawer before trying to run scripts.')
+                print('Please select a drawer before trying to run drawer commands.')
             else:
                 print(exception)
 
@@ -137,9 +153,12 @@ text, turtle, TKinter
         try:
             self.parser.data = int(arg)
             self.parser.draw_goto_x(self.parser.data)
+        except ValueError:
+            print('This command only takes numbers')
         except AttributeError as exception:
+            # If no drawer is set then don't allow a command to run
             if self.drawer is None:
-                print('Please select a drawer before trying to run scripts.')
+                print('Please select a drawer before trying to run drawer commands.')
             else:
                 print(exception)
 
@@ -149,9 +168,12 @@ text, turtle, TKinter
         try:
             self.parser.data = int(arg)
             self.parser.draw_goto_y(self.parser.data)
+        except ValueError:
+            print('This command only takes numbers')
         except AttributeError as exception:
+            # If no drawer is set then don't allow a command to run
             if self.drawer is None:
-                print('Please select a drawer before trying to run scripts.')
+                print('Please select a drawer before trying to run drawer commands.')
             else:
                 print(exception)
 
@@ -166,9 +188,12 @@ Preset pens:
         try:
             self.parser.data = int(arg)
             self.parser.draw_select_pen(self.parser.data)
+        except ValueError:
+            print('This command only takes numbers')
         except AttributeError as exception:
+            # If no drawer is set then don't allow a command to run
             if self.drawer is None:
-                print('Please select a drawer before trying to run scripts.')
+                print('Please select a drawer before trying to run drawer commands.')
             else:
                 print(exception)
 
@@ -176,6 +201,8 @@ Preset pens:
         """Load a script and run it.
 -----"""
         try:
+            # Search for file without extension, if the file isn't found try with extension
+            # Using multi-line and case insensitive for regex search
             if re.search(r'^.*\.(' + self.source_reader.script_extension + r')$', arg, re.M | re.I):
                 file = arg
             else:
@@ -183,16 +210,19 @@ Preset pens:
             print('Running script:', file)
             self.source_reader.source = [line.rstrip('\n') for line in open(file)]
         except FileNotFoundError:
-            if re.search(r'^.*\.(' + self.source_reader.script_extension + r')$', arg, re.M | re.I):
+            # If file is found in search without the script extension alert that TIGr only reads .tigr scripts
+            if not re.search(r'^.*\.(' + self.source_reader.script_extension + r')$', arg, re.M | re.I):
                 print('Script not found. Enter a valid file name.')
             else:
                 print(f'Script not found. TIGrEx only reads {self.source_reader.script_extension} files as scripts.')
         except AttributeError as exception:
+            # If no drawer is set then don't allow a script to run
             if self.drawer is None:
                 print('Please select a drawer before trying to run scripts.')
             else:
                 print(exception)
         else:
+            # Start parsing the script
             self.source_reader.file_name = arg
             self.source_reader.go()
 
@@ -207,6 +237,7 @@ Preset pens:
         exit()
 
     def parse(self, arg):
+        # Convert arg to a tuple
         return tuple(map(int, arg.split()))
 
 
@@ -214,6 +245,7 @@ if __name__ == '__main__':
     app = TIGrEx()
     test_type = ''
 
+    # Run specified tests
     if test_type == 'doctest':
         doctest.testmod(verbose=3)
     elif test_type == 'unittest':

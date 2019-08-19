@@ -53,6 +53,7 @@ class Parser(AbstractParser):
         self.drawer.pen_up()
 
     def draw_line_data(self, data):
+        # Parse drawer specific command through alias and command tables
         self.drawer.draw_line(self.direction_table[self.command_aliases[self.command]], self.data)
 
     def draw_goto_x(self, data):
@@ -64,6 +65,8 @@ class Parser(AbstractParser):
     def parse(self, raw_source):
         self.source = raw_source
 
+        # Loop through each line in source and separate the command form the arguments
+        # Lookup command through alias and command tables and execute
         for source_index, source_line in enumerate(self.source):
             self.command = source_line.split(' ', 1)[0].lower()
 
