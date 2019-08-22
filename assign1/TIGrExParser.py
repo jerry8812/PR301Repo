@@ -11,35 +11,19 @@ class Parser(AbstractParser):
 
     def __init__(self, drawer):
         super().__init__(drawer)
-        self.direction_table = {'north': 90,
-                                'east': 0,
-                                'west': 180,
-                                'south': 270}
-        self.commands = {'pen': self.draw_select_pen,
-                         'up': self.draw_pen_up,
-                         'down': self.draw_pen_down,
-                         'north': self.draw_line_data,
-                         'east': self.draw_line_data,
-                         'south': self.draw_line_data,
-                         'west': self.draw_line_data,
+        self.direction_table = {'n|north': 90,
+                                'e|east': 0,
+                                'w|west': 180,
+                                's|south': 270}
+        self.commands = {'p|pen': self.draw_select_pen,
+                         'u|up': self.draw_pen_up,
+                         'd|down': self.draw_pen_down,
+                         'n|north': self.draw_line_data,
+                         'e|east': self.draw_line_data,
+                         's|south': self.draw_line_data,
+                         'w|west': self.draw_line_data,
                          'x': self.draw_goto_x,
                          'y': self.draw_goto_x}
-        self.command_aliases = {'p': 'pen',
-                                'pen': 'pen',
-                                'u': 'up',
-                                'up': 'up',
-                                'd': 'down',
-                                'down': 'down',
-                                'n': 'north',
-                                'north': 'north',
-                                'e': 'east',
-                                'east': 'east',
-                                's': 'south',
-                                'south': 'south',
-                                'w': 'west',
-                                'west': 'west',
-                                'x': 'x',
-                                'y': 'y'}
 
     def draw_clear(self, data=None):
         self.drawer.clear()
@@ -55,7 +39,11 @@ class Parser(AbstractParser):
 
     def draw_line_data(self, data):
         # Parse drawer specific command through alias and command tables
-        self.drawer.draw_line(self.direction_table[self.command_aliases[self.command]], self.data)
+        # Multi-line case insensitive regex
+        for alias in self.commands:
+            if re.search(r'^.*(' + alias + r')$', self.command, re.M | re.I):
+                self.drawer.draw_line(self.direction_table[alias], self.data)
+                break
 
     def draw_goto_x(self, data):
         self.drawer.go_along(data)
@@ -68,10 +56,14 @@ class Parser(AbstractParser):
 
         # Loop through each line in source and separate the command form the arguments
         # Lookup command through alias and command tables and execute
+        # Multi-line case insensitive regex
         for source_line in self.source:
             self.command = source_line.split(' ', 1)[0].lower()
 
             if ' ' in source_line:
                 self.data = float(source_line.split(' ')[1])
 
-            self.commands[self.command_aliases[self.command]](self.data)
+            for alias in self.commands:
+                if re.search(r'^.*(' + alias + r')$', self.command, re.M | re.I):
+                    self.commands[alias](self.data)
+                    break

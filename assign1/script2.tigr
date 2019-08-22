@@ -1,1 +1,10 @@
-p 3
+pen 3
+up
+x 0
+y 0
+down
+east 50
+north 50
+west 50
+south 50
+up
