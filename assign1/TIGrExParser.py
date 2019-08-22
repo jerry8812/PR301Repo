@@ -1,4 +1,5 @@
 from TIGr import AbstractParser
+import re
 
 
 class Parser(AbstractParser):
@@ -67,9 +68,10 @@ class Parser(AbstractParser):
 
         # Loop through each line in source and separate the command form the arguments
         # Lookup command through alias and command tables and execute
-        for source_index, source_line in enumerate(self.source):
+        for source_line in self.source:
             self.command = source_line.split(' ', 1)[0].lower()
 
             if ' ' in source_line:
-                self.data = float(source_line.partition(' ')[2])
+                self.data = float(source_line.split(' ')[1])
+
             self.commands[self.command_aliases[self.command]](self.data)

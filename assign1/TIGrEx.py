@@ -7,7 +7,6 @@ from TIGrExTextDrawer import TextDrawer
 from TIGrExTurtleDrawer import TurtleDrawer
 import cmd
 import re
-import doctest
 
 
 class TIGrEx(cmd.Cmd):
@@ -243,12 +242,10 @@ Preset pens:
 
 if __name__ == '__main__':
     app = TIGrEx()
-    test_type = ''
 
     # Run specified tests
-    if test_type == 'doctest':
+    if False:
+        import doctest
         doctest.testmod(verbose=3)
-    elif test_type == 'unittest':
-        print('hi')
 
     app.cmdloop()
