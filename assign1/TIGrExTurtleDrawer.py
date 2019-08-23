@@ -12,6 +12,11 @@ class TurtleDrawer(AbstractDrawer):
     1 - colour black, size 10
     2 - colour red, size 10
     3 - colour blue, size 10
+
+
+    Begin doctest - Written with Jonathan Holdaway and Sean Ryan 23/08/2019
+
+    End doctest
     """
     def __init__(self):
         super().__init__()

@@ -12,10 +12,10 @@ import re
 class TIGrEx(cmd.Cmd):
     """Main application controller for TIGrEx
 
-    Begin doctest
 
-    >>> print('hello')
-    hello
+    Begin doctest - Written with Jonathan Holdaway and Sean Ryan 23/08/2019
+
+    End doctest
     """
     intro = 'Welcome to Extended Tiny Interpreted Graphics.\n' \
             'Use "drawer" command to choose graphics library.\n' \

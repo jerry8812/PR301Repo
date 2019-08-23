@@ -7,6 +7,42 @@ class Parser(AbstractParser):
 
     Inherits:
     drawer, source, command, data, parse(raw_source)
+
+
+    Begin doctest - Written with Jonathan Holdaway and Sean Ryan 23/08/2019
+
+    >>> from TIGrExTextDrawer import TextDrawer
+    >>> parser = Parser(TextDrawer())
+    Now using Text Drawer
+    >>> source = ['p 3']
+    >>> parser.parse(source)
+    Selected pen 3.0
+    >>> source = ['x 5']
+    >>> parser.parse(source)
+    Gone to X=5.0
+    >>> source = ['y 5']
+    >>> parser.parse(source)
+    Gone to Y=5.0
+    >>> source = ['d']
+    >>> parser.parse(source)
+    Pen down
+    >>> source = ['w 5']
+    >>> parser.parse(source)
+    drawing line of length 5.0 at 180 degrees
+    >>> source = ['n 5']
+    >>> parser.parse(source)
+    drawing line of length 5.0 at 90 degrees
+    >>> source = ['e 5']
+    >>> parser.parse(source)
+    drawing line of length 5.0 at 0 degrees
+    >>> source = ['s 5']
+    >>> parser.parse(source)
+    drawing line of length 5.0 at 270 degrees
+    >>> source = ['u']
+    >>> parser.parse(source)
+    Pen lifted
+
+    End doctest
     """
 
     def __init__(self, drawer):
@@ -23,7 +59,7 @@ class Parser(AbstractParser):
                          's|south': self.draw_line_data,
                          'w|west': self.draw_line_data,
                          'x': self.draw_goto_x,
-                         'y': self.draw_goto_x}
+                         'y': self.draw_goto_y}
 
     def draw_clear(self, data=None):
         self.drawer.clear()
@@ -67,3 +103,8 @@ class Parser(AbstractParser):
                 if re.search(r'^.*(' + alias + r')$', self.command, re.M | re.I):
                     self.commands[alias](self.data)
                     break
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod(verbose=3)

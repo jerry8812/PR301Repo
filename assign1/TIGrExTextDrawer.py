@@ -6,6 +6,11 @@ class TextDrawer(AbstractDrawer):
 
     Inherits:
     select_pen(pen_num), pen_down(), pen_up(), go_along(along), go_down(down), draw_line(direction, distance)
+
+
+    Begin doctest - Written with Jonathan Holdaway and Sean Ryan 23/08/2019
+
+    End doctest
     """
     def __init__(self):
         super().__init__()
@@ -34,3 +39,8 @@ class TextDrawer(AbstractDrawer):
 
     def clear(self):
         print('Cleared drawing')
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod(verbose=3)
