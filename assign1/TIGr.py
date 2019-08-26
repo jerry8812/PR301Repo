@@ -7,6 +7,7 @@ from abc import ABC, abstractmethod
 class AbstractDrawer(ABC):
     """Responsible for defining an interface for drawing
     """
+
     @abstractmethod
     def select_pen(self, pen_num):
         pass
@@ -49,6 +50,7 @@ class AbstractSourceReader(ABC):
     Initiates the Draw use-case.
     Links to a parser and passes the source text onwards
     """
+
     def __init__(self, parser, optional_file_name=None):
         self.parser = parser
         self.file_name = optional_file_name

@@ -1,3 +1,8 @@
+"""TIGrEx
+Text Drawer
+
+By SeanRyan
+"""
 from TIGr import AbstractDrawer
 
 
@@ -12,11 +17,13 @@ class TextDrawer(AbstractDrawer):
 
     End doctest
     """
+
     def __init__(self):
         super().__init__()
         print('Now using Text Drawer')
 
-    def shutdown(self):
+    @staticmethod
+    def shutdown():
         print('No longer using Text Drawer.')
 
     def select_pen(self, pen_num):
@@ -37,10 +44,12 @@ class TextDrawer(AbstractDrawer):
     def draw_line(self, direction, distance):
         print(f'drawing line of length {distance} at {direction} degrees')
 
-    def clear(self):
+    @staticmethod
+    def clear():
         print('Cleared drawing')
 
 
 if __name__ == '__main__':
     import doctest
+
     doctest.testmod(verbose=3)

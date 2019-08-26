@@ -3,11 +3,10 @@ from TIGrExTurtleDrawer import TurtleDrawer
 from TIGrExParser import Parser
 from TIGrExSourceReader import SourceReader
 
-"""Written by Thomas Baines and Sean Ryan 22/08/2019"""
+"""Unit tests written by Thomas Baines and Sean Ryan 22/08/2019"""
 
 
 class DrawerTestCase(unittest.TestCase):
-
     def setUp(self):
         self.drawer = TurtleDrawer()
 
@@ -38,54 +37,60 @@ class DrawerTestCase(unittest.TestCase):
     def test_select_pen_executes(self):
         """Test to confirm that the drawer's method select_pen runs without error"""
         raised = False
+        # noinspection PyBroadException
         try:
             self.drawer.select_pen(1)
-        except:
+        except Exception:
             raised = True
         self.assertFalse(raised, "Error Raised")
 
-    def test_select_pen_executes(self):
-        """Test to confirm that the drawer's method select_pen runs without error"""
+    def test_pen_up_executes(self):
+        """Test to confirm that the drawer's method pen_up runs without error"""
         raised = False
+        # noinspection PyBroadException
         try:
-            self.drawer.select_pen(1)
-        except:
+            self.drawer.pen_up()
+        except Exception:
             raised = True
         self.assertFalse(raised, "Error Raised")
 
     def test_pen_down_executes(self):
         """Test to confirm that the drawer's method pen_down runs without error"""
         raised = False
+        # noinspection PyBroadException
         try:
             self.drawer.pen_down()
-        except:
+        except Exception:
             raised = True
         self.assertFalse(raised, "Error Raised")
 
     def test_go_along_executes(self):
         """Test to confirm that the drawer's method go_along runs without error"""
         raised = False
+        # noinspection PyBroadException
         try:
             self.drawer.go_along(20)
-        except:
+        except Exception:
             raised = True
         self.assertFalse(raised, "Error Raised")
 
     def test_go_down_executes(self):
         """Test to confirm that the drawer's method go_down runs without error"""
         raised = False
+        # noinspection PyBroadException
         try:
             self.drawer.go_down(20)
-        except:
+        except Exception:
             raised = True
         self.assertFalse(raised, "Error Raised")
 
     def test_draw_line_executes(self):
         """Test to confirm that the drawer's method draw_line runs without error"""
         raised = False
+        # noinspection PyBroadException
         try:
             self.drawer.draw_line(20, 20)
-        except:
+        except Exception:
             raised = True
         self.assertFalse(raised, "Error Raised")
 
@@ -102,9 +107,10 @@ class ParserTestCase(unittest.TestCase):
     def test_parse_executes(self):
         """Test to confirm that the parser's method parse runs without error"""
         raised = False
+        # noinspection PyBroadException
         try:
             self.parser.parse(self.source)
-        except:
+        except Exception:
             raised = True
         self.assertFalse(raised, "Error Raised")
 
@@ -115,7 +121,6 @@ class ParserTestCase(unittest.TestCase):
 
 
 class SourceReaderTestCase(unittest.TestCase):
-
     def setUp(self):
         self.source_reader = SourceReader(Parser(TurtleDrawer()))
 
@@ -127,9 +132,10 @@ class SourceReaderTestCase(unittest.TestCase):
         """Test to confirm that the source reader's method go runs without error"""
         raised = False
         self.source_reader.source = ["p 3"]
+        # noinspection PyBroadException
         try:
             self.source_reader.go()
-        except:
+        except Exception:
             raised = True
         self.assertFalse(raised, "Error Raised")
 

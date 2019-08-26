@@ -1,5 +1,42 @@
 """TIGrEx
 Extended Tiny Interpreted Graphics
+
+By Sean Ryan
+
+Features:
+Interactive frontend
+    - Increases functionality by providing another way of interaction with the program
+    - Tested by doctests
+Supports piping and scripting
+    - Increases flexibility by allowing images to be drawn through automatic scripts
+    - Clever by using regex and aliases to allow for flexible syntax
+    - Tested by doctests
+Parsed from configurable lookup tables
+    - Increases flexibility by allowing for commands to be added easily and dynamically
+    - Clever by using regex for aliases for more flexibility
+    - Tested by unit tests and doctests
+Uses regular expressions in parser
+    - Increases flexibility by allowing for aliases to be used in scripts
+    - Tested by unit tests and doctests
+Uses generic parsing engine
+    - Increases functionality by providing an interface that can be used by any drawer
+    - Tested by unit tests and doctests
+Outputs with turtle.py
+    - Increases functionality by using an alternative form of drawing to the screen
+    - Tested by unit tests and doctests
+Provide doctests
+    - Improves robustness by testing features and functions for if they are valid and working
+Provide unit tests
+    - Improves robustness by testing features and functions for if they are valid and working
+    - Clever by dynamically loading tests from a Test Case class in to a test suite
+Breadth of test coverage
+    - Improves robustness by ensuring every feature works as expected
+    - Every function has been covered
+    - Tests done through both unit tests and doctests
+Amount of error trapping & handling
+    - Improves robustness by keeping the program running even when errors are found
+    - Most functions have error handling to alert the user of issues with input
+    - Also used for ensuring data gets handled correctly
 """
 from TIGrExSourceReader import SourceReader
 from TIGrExParser import Parser
@@ -13,7 +50,43 @@ class TIGrEx(cmd.Cmd):
     """Main application controller for TIGrEx
 
 
-    Begin doctest - Written with Jonathan Holdaway and Sean Ryan 23/08/2019
+    Begin doctest - Written with Jonathan Holdaway and Sean Ryan 24/08/2019
+
+    >>> app.do_drawer('turtle')
+    Now using Turtle Drawer
+    >>> app.do_pen(2)
+    Selected pen 2
+    >>> app.do_x(5)
+    Gone to X=5
+    >>> app.do_y(5)
+    Gone to Y=5
+    >>> app.do_down()
+    Pen down
+    >>> app.do_east(50)
+    drawing line of length 50 at 0 degrees
+    >>> app.do_north(50)
+    drawing line of length 50 at 90 degrees
+    >>> app.do_west(50)
+    drawing line of length 50 at 180 degrees
+    >>> app.do_south(50)
+    drawing line of length 50 at 270 degrees
+    >>> app.do_up()
+    Pen lifted
+
+    Test script running
+    >>> app.do_clear()
+    Cleared drawing
+    >>> app.do_run('script')
+    Running script: script.tigr
+    Selected pen 2.0
+    Gone to X=5.0
+    Gone to Y=15.0
+    Pen down
+    drawing line of length 2.0 at 180 degrees
+    drawing line of length 1.0 at 90 degrees
+    drawing line of length 2.0 at 0 degrees
+    drawing line of length 12.7 at 270 degrees
+    Pen lifted
 
     End doctest
     """
@@ -45,12 +118,11 @@ text, turtle, TKinter
             self.setup(TextDrawer())
         elif arg.lower() == 'turtle':
             self.setup(TurtleDrawer())
-        elif arg.lower() == 'tkinter':
-            self.setup(TextDrawer())
         else:
             print('Please select a valid drawer.')
 
-    def do_clear(self, arg):
+    def do_clear(self, arg=None):
+        del arg
         try:
             self.parser.draw_clear()
         except AttributeError as exception:
@@ -60,9 +132,10 @@ text, turtle, TKinter
             else:
                 print(exception)
 
-    def do_up(self, arg):
+    def do_up(self, arg=None):
         """Stop drawing.
 -----"""
+        del arg
         try:
             self.parser.draw_pen_up()
         except AttributeError as exception:
@@ -72,9 +145,10 @@ text, turtle, TKinter
             else:
                 print(exception)
 
-    def do_down(self, arg):
+    def do_down(self, arg=None):
         """Start drawing.
 -----"""
+        del arg
         try:
             self.parser.draw_pen_down()
         except AttributeError as exception:
@@ -225,27 +299,32 @@ Preset pens:
             self.source_reader.file_name = arg
             self.source_reader.go()
 
-    def do_quit(self, arg):
+    @staticmethod
+    def do_quit(arg):
         """Closes the program.
 -----"""
+        del arg
         exit()
 
-    def do_exit(self, arg):
+    @staticmethod
+    def do_exit(arg):
         """Closes the program
 -----"""
+        del arg
         exit()
 
-    def parse(self, arg):
+    @staticmethod
+    def parse(arg):
         # Convert arg to a tuple
         return tuple(map(int, arg.split()))
 
 
 if __name__ == '__main__':
     app = TIGrEx()
-
     # Run specified tests
-    if False:
+    # noinspection PyUnreachableCode
+    if True:
         import doctest
-        doctest.testmod(verbose=3)
 
+        doctest.testmod(verbose=3)
     app.cmdloop()

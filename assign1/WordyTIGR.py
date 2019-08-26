@@ -7,6 +7,7 @@ from TIGr import AbstractDrawer, AbstractParser, AbstractSourceReader
 
 class Drawer(AbstractDrawer):
     """ Responsible for printing as text what the drawing commands are"""
+
     def select_pen(self, pen_num):
         print(f'Selected pen {pen_num}')
 
@@ -35,9 +36,10 @@ class Parser(AbstractParser):
         self.source = raw_source
         for line in self.source:
             self.command = line[0]
+            # noinspection PyBroadException
             try:
                 self.data = int(line[2])
-            except:
+            except Exception:
                 self.data = 0
 
             if self.command == 'P':
@@ -68,6 +70,7 @@ class SourceReader(AbstractSourceReader):
     Initiates the Draw use-case.
     Links to a parser and passes the source text onwards
     """
+
     def go(self):
         self.source.append('P 2 # select pen 2')
         self.source.append('X 5 # go to 5 along')

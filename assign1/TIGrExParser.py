@@ -1,3 +1,8 @@
+"""TIGrEx
+Parsing Engine
+
+By Sean Ryan
+"""
 from TIGr import AbstractParser
 import re
 
@@ -11,9 +16,9 @@ class Parser(AbstractParser):
 
     Begin doctest - Written with Jonathan Holdaway and Sean Ryan 23/08/2019
 
-    >>> from TIGrExTextDrawer import TextDrawer
-    >>> parser = Parser(TextDrawer())
-    Now using Text Drawer
+    >>> from TIGrExTurtleDrawer import TurtleDrawer
+    >>> parser = Parser(TurtleDrawer())
+    Now using Turtle Drawer
     >>> source = ['p 3']
     >>> parser.parse(source)
     Selected pen 3.0
@@ -62,18 +67,22 @@ class Parser(AbstractParser):
                          'y': self.draw_goto_y}
 
     def draw_clear(self, data=None):
+        del data
         self.drawer.clear()
 
     def draw_select_pen(self, data):
         self.drawer.select_pen(data)
 
     def draw_pen_down(self, data=None):
+        del data
         self.drawer.pen_down()
 
     def draw_pen_up(self, data=None):
+        del data
         self.drawer.pen_up()
 
-    def draw_line_data(self, data):
+    def draw_line_data(self, data=None):
+        del data
         # Parse drawer specific command through alias and command tables
         # Multi-line case insensitive regex
         for alias in self.commands:
@@ -107,4 +116,5 @@ class Parser(AbstractParser):
 
 if __name__ == '__main__':
     import doctest
+
     doctest.testmod(verbose=3)

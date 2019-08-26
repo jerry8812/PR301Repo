@@ -1,0 +1,34 @@
+Features:
+Interactive frontend
+    - Increases functionality by providing another way of interaction with the program
+    - Tested by doctests
+Supports piping and scripting
+    - Increases flexibility by allowing images to be drawn through automatic scripts
+    - Clever by using regex and aliases to allow for flexible syntax
+    - Tested by doctests
+Parsed from configurable lookup tables
+    - Increases flexibility by allowing for commands to be added easily and dynamically
+    - Clever by using regex for aliases for more flexibility
+    - Tested by unit tests and doctests
+Uses regular expressions in parser
+    - Increases flexibility by allowing for aliases to be used in scripts
+    - Tested by unit tests and doctests
+Uses generic parsing engine
+    - Increases functionality by providing an interface that can be used by any drawer
+    - Tested by unit tests and doctests
+Outputs with turtle.py
+    - Increases functionality by using an alternative form of drawing to the screen
+    - Tested by unit tests and doctests
+Provide doctests
+    - Improves robustness by testing features and functions for if they are valid and working
+Provide unit tests
+    - Improves robustness by testing features and functions for if they are valid and working
+    - Clever by dynamically loading tests from a Test Case class in to a test suite
+Breadth of test coverage
+    - Improves robustness by ensuring every feature works as expected
+    - Every function has been covered
+    - Tests done through both unit tests and doctests
+Amount of error trapping & handling
+    - Improves robustness by keeping the program running even when errors are found
+    - Most functions have error handling to alert the user of issues with input
+    - Also used for ensuring data gets handled correctly
