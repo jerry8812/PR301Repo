@@ -214,7 +214,7 @@ Preset pens:
                 self.source_reader.source = [line.rstrip('\n') for line in open(file)]
             except FileNotFoundError:
                 # If file is found in search without the script extension alert that TIGr only reads .tigr scripts
-                if not re.search(r'^.*\.(' + self.source_reader.script_extension + r')$', arg, re.M | re.I):
+                if not extension_check:
                     print('Script not found. Enter a valid file name.')
                 else:
                     print(f'Script not found.TIGrEx only reads {self.source_reader.script_extension} files as scripts.')
@@ -226,20 +226,16 @@ Preset pens:
     # extract error check into two new methods  ---- Duplicated Code
     def drawer_check(self):
         if self.drawer is None:
-            try:
-                raise AttributeError
-            except AttributeError:
-                print("Please select a drawer before trying to run drawer commands.")
+            print("Please select a drawer before trying to run drawer commands.")
+            return False
         else:
             return True
 
     @staticmethod
     def data_check(arg):
         if arg == '' or re.search(r'[^0-9]', str(arg), re.M | re.I):
-            try:
-                raise ValueError
-            except ValueError:
-                print('This command only takes numbers')
+            print('This command only takes numbers')
+            return False
         else:
             return True
 
