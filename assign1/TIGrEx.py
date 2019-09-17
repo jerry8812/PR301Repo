@@ -89,7 +89,7 @@ class TIGrEx(cmd.Cmd):
     Pen lifted
 
     End doctest
-    """
+    # """
     intro = 'Welcome to Extended Tiny Interpreted Graphics.\n' \
             'Use "drawer" command to choose graphics library.\n' \
             'Enter ? for help.'
@@ -110,7 +110,7 @@ class TIGrEx(cmd.Cmd):
     def do_drawer(self, arg):
         """Select graphics library to draw with.
 Available drawers:
-text, turtle, TKinter
+text, turtle
 -----"""
         if self.drawer:
             self.drawer.shutdown()
@@ -123,181 +123,125 @@ text, turtle, TKinter
 
     def do_clear(self, arg=None):
         del arg
-        try:
+        if self.drawer_check():
             self.parser.draw_clear()
-        except AttributeError as exception:
-            if self.drawer is None:
-                # If no drawer is set then don't allow a command to run
-                print('Please select a drawer before trying to run drawer commands.')
-            else:
-                print(exception)
 
     def do_up(self, arg=None):
         """Stop drawing.
 -----"""
         del arg
-        try:
+        if self.drawer_check():
             self.parser.draw_pen_up()
-        except AttributeError as exception:
-            # If no drawer is set then don't allow a command to run
-            if self.drawer is None:
-                print('Please select a drawer before trying to run drawer commands.')
-            else:
-                print(exception)
 
     def do_down(self, arg=None):
         """Start drawing.
 -----"""
         del arg
-        try:
+        if self.drawer_check():
             self.parser.draw_pen_down()
-        except AttributeError as exception:
-            # If no drawer is set then don't allow a command to run
-            if self.drawer is None:
-                print('Please select a drawer before trying to run drawer commands.')
-            else:
-                print(exception)
 
     def do_north(self, arg):
         """Draw north by a specified amount.
 -----"""
-        try:
+        if self.drawer_check() and self.data_check(arg):
             self.parser.data = int(arg)
             self.parser.command = 'north'
             self.parser.draw_line_data(self.parser.data)
-        except ValueError:
-            print('This command only takes numbers')
-        except AttributeError as exception:
-            # If no drawer is set then don't allow a command to run
-            if self.drawer is None:
-                print('Please select a drawer before trying to run drawer commands.')
-            else:
-                print(exception)
 
     def do_south(self, arg):
         """Draw south by a specified amount.
 -----"""
-        try:
+        if self.drawer_check() and self.data_check(arg):
             self.parser.data = int(arg)
             self.parser.command = 'south'
             self.parser.draw_line_data(self.parser.data)
-        except AttributeError as exception:
-            # If no drawer is set then don't allow a command to run
-            if self.drawer is None:
-                print('Please select a drawer before trying to run drawer commands.')
-            else:
-                print(exception)
 
     def do_east(self, arg):
         """Draw east by a specified amount.
 -----"""
-        try:
+        if self.drawer_check() and self.data_check(arg):
             self.parser.data = int(arg)
             self.parser.command = 'east'
             self.parser.draw_line_data(self.parser.data)
-        except ValueError:
-            print('This command only takes numbers')
-        except AttributeError as exception:
-            # If no drawer is set then don't allow a command to run
-            if self.drawer is None:
-                print('Please select a drawer before trying to run drawer commands.')
-            else:
-                print(exception)
 
     def do_west(self, arg):
         """Draw west by a specified amount.
 -----"""
-        try:
+        if self.drawer_check() and self.data_check(arg):
             self.parser.data = int(arg)
             self.parser.command = 'west'
             self.parser.draw_line_data(self.parser.data)
-        except ValueError:
-            print('This command only takes numbers')
-        except AttributeError as exception:
-            # If no drawer is set then don't allow a command to run
-            if self.drawer is None:
-                print('Please select a drawer before trying to run drawer commands.')
-            else:
-                print(exception)
 
     def do_x(self, arg):
         """Set X position of the pen.
 -----"""
-        try:
+        if self.drawer_check() and self.data_check(arg):
             self.parser.data = int(arg)
             self.parser.draw_goto_x(self.parser.data)
-        except ValueError:
-            print('This command only takes numbers')
-        except AttributeError as exception:
-            # If no drawer is set then don't allow a command to run
-            if self.drawer is None:
-                print('Please select a drawer before trying to run drawer commands.')
-            else:
-                print(exception)
 
     def do_y(self, arg):
         """Set Y position of the pen.
 -----"""
-        try:
+        if self.drawer_check() and self.data_check(arg):
             self.parser.data = int(arg)
             self.parser.draw_goto_y(self.parser.data)
-        except ValueError:
-            print('This command only takes numbers')
-        except AttributeError as exception:
-            # If no drawer is set then don't allow a command to run
-            if self.drawer is None:
-                print('Please select a drawer before trying to run drawer commands.')
-            else:
-                print(exception)
 
     def do_pen(self, arg):
         """Select preset pen.
-
 Preset pens:
 1 - colour black, size 10
 2 - colour red, size 10
 3 - colour blue, size 10
 -----"""
-        try:
+        if self.drawer_check() and self.data_check(arg):
             self.parser.data = int(arg)
             self.parser.draw_select_pen(self.parser.data)
-        except ValueError:
-            print('This command only takes numbers')
-        except AttributeError as exception:
-            # If no drawer is set then don't allow a command to run
-            if self.drawer is None:
-                print('Please select a drawer before trying to run drawer commands.')
-            else:
-                print(exception)
 
     def do_run(self, arg):
         """Load a script and run it.
 -----"""
-        try:
+        if self.drawer_check():
             # Search for file without extension, if the file isn't found try with extension
             # Using multi-line and case insensitive for regex search
-            if re.search(r'^.*\.(' + self.source_reader.script_extension + r')$', arg, re.M | re.I):
+            # modified by Jerry Wang, this regx can not match a file name end with .tigr
+            extension_check = re.search(r'^.*(' + self.source_reader.script_extension + r')$', arg, re.M | re.I)
+            if extension_check:
                 file = arg
             else:
                 file = arg + self.source_reader.script_extension
             print('Running script:', file)
-            self.source_reader.source = [line.rstrip('\n') for line in open(file)]
-        except FileNotFoundError:
-            # If file is found in search without the script extension alert that TIGr only reads .tigr scripts
-            if not re.search(r'^.*\.(' + self.source_reader.script_extension + r')$', arg, re.M | re.I):
-                print('Script not found. Enter a valid file name.')
+            try:
+                self.source_reader.source = [line.rstrip('\n') for line in open(file)]
+            except FileNotFoundError:
+                # If file is found in search without the script extension alert that TIGr only reads .tigr scripts
+                if not re.search(r'^.*\.(' + self.source_reader.script_extension + r')$', arg, re.M | re.I):
+                    print('Script not found. Enter a valid file name.')
+                else:
+                    print(f'Script not found.TIGrEx only reads {self.source_reader.script_extension} files as scripts.')
             else:
-                print(f'Script not found. TIGrEx only reads {self.source_reader.script_extension} files as scripts.')
-        except AttributeError as exception:
-            # If no drawer is set then don't allow a script to run
-            if self.drawer is None:
-                print('Please select a drawer before trying to run scripts.')
-            else:
-                print(exception)
+                # Start parsing the script
+                self.source_reader.file_name = arg
+                self.source_reader.go()
+
+    # extract error check into two new methods  ---- Duplicated Code
+    def drawer_check(self):
+        if self.drawer is None:
+            try:
+                raise AttributeError
+            except AttributeError:
+                print("Please select a drawer before trying to run drawer commands.")
         else:
-            # Start parsing the script
-            self.source_reader.file_name = arg
-            self.source_reader.go()
+            return True
+
+    @staticmethod
+    def data_check(arg):
+        if arg == '' or re.search(r'[^0-9]', str(arg), re.M | re.I):
+            try:
+                raise ValueError
+            except ValueError:
+                print('This command only takes numbers')
+        else:
+            return True
 
     @staticmethod
     def do_quit(arg):
@@ -308,7 +252,7 @@ Preset pens:
 
     @staticmethod
     def do_exit(arg):
-        """Closes the program
+        """Closes the program.
 -----"""
         del arg
         exit()
