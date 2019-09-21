@@ -38,7 +38,6 @@ Amount of error trapping & handling
     - Most functions have error handling to alert the user of issues with input
     - Also used for ensuring data gets handled correctly
 """
-from TIGrExSourceReader import SourceReader
 from TIGrExParser import Parser
 from TIGrExTextDrawer import TextDrawer
 from TIGrExTurtleDrawer import TurtleDrawer
@@ -100,12 +99,12 @@ class TIGrEx(cmd.Cmd):
                      'Use "drawer" command to choose graphics library.\n' \
                      'Enter ? for help.'
         self.prompt = 'TIGrEx >: '
+        self.script_extension = '.tigr'
 
     def setup(self, drawer):
         # Generic setup for classes
         self.drawer = drawer
         self.parser = Parser(self.drawer)
-        self.source_reader = SourceReader(self.parser)
 
     def do_drawer(self, arg):
         """Select graphics library to draw with.
@@ -183,24 +182,23 @@ Preset pens:
         # Search for file without extension, if the file isn't found try with extension
         # Using multi-line and case insensitive for regex search
         # modified by Jerry Wang, this regx can not match a file name end with .tigr
-        extension_check = re.search(r'^.*(' + self.source_reader.script_extension + r')$', arg, re.M | re.I)
+        extension_check = re.search(r'^.*(' + self.script_extension + r')$', arg, re.M | re.I)
         if extension_check:
             file = arg
         else:
-            file = arg + self.source_reader.script_extension
+            file = arg + self.script_extension
         print('Running script:', file)
         try:
-            self.source_reader.source = [line.rstrip('\n') for line in open(file)]
+            raw_source = [line.rstrip('\n') for line in open(file)]
         except FileNotFoundError:
             # If file is found in search without the script extension alert that TIGr only reads .tigr scripts
             if not extension_check:
                 print('Script not found. Enter a valid file name.')
             else:
-                print(f'Script not found.TIGrEx only reads {self.source_reader.script_extension} files as scripts.')
+                print(f'Script not found.TIGrEx only reads {self.script_extension} files as scripts.')
         else:
             # Start parsing the script
-            self.source_reader.file_name = arg
-            self.source_reader.go()
+            self.parser.parse(raw_source)
 
     # extract error check into two new methods  ---- Duplicated Code
     """I realized that the way I refactored code caused another duplication bad smell
@@ -211,7 +209,7 @@ Preset pens:
             self.drawer = TextDrawer()
             print('setup TextDrawer as default Drawer as no drawer has been found,\n'
                   'use Drawer command to change drawer!')
-        return cmd.Cmd.precmd(self, line)
+        return line
 
     @staticmethod
     def do_quit(arg):

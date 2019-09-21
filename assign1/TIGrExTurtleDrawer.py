@@ -52,7 +52,8 @@ class TurtleDrawer(AbstractDrawer):
         print('Now using Turtle Drawer')
         self.turtle = turtle.Turtle()
         turtle.Screen().title('TIGrEx')
-        self.pen_color = {1: 'black', 2: 'red', 3: 'blue'}
+        # look up table for pen colour
+        self.pen_colour = {1: 'black', 2: 'red', 3: 'blue'}
 
     @staticmethod
     def shutdown():
@@ -61,8 +62,8 @@ class TurtleDrawer(AbstractDrawer):
 
     def select_pen(self, pen_num):
         print(f'Selected pen {pen_num}')
-        if pen_num in self.pen_color:
-            self.turtle.pen(fillcolor='white', pencolor=self.pen_color[pen_num], pensize=10)
+        if pen_num in self.pen_colour:
+            self.turtle.pen(fillcolor='white', pencolor=self.pen_colour[pen_num], pensize=10)
         else:
             print('Please choose a valid pen number.')
 
