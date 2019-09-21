@@ -113,6 +113,7 @@ text, turtle
 -----"""
         if self.drawer:
             self.drawer.shutdown()
+            self.drawer = None
         if arg.lower() == 'text':
             self.setup(TextDrawer())
         elif arg.lower() == 'turtle':
@@ -205,11 +206,14 @@ Preset pens:
     So I put Drawer check in precmd and all data check in parser.parse where it meant to be
     """
     def precmd(self, line):
-        if self.drawer is None:
-            self.drawer = TextDrawer()
-            print('setup TextDrawer as default Drawer as no drawer has been found,\n'
-                  'use Drawer command to change drawer!')
-        return line
+        if line is not None and line.split(' ')[0].lower() not in ('drawer', '?', 'exit', 'quit'):
+            if self.drawer is None:
+                print('Please select a drawer before trying to run drawer commands')
+                return ''
+            else:
+                return line
+        else:
+            return line
 
     @staticmethod
     def do_quit(arg):
@@ -224,6 +228,11 @@ Preset pens:
 -----"""
         del arg
         exit()
+
+    # It runs previous command when get '' from precmd method as return.
+    # Override emptyline method to make sure it runs nothing
+    def emptyline(self):
+        pass
 
 
 if __name__ == '__main__':

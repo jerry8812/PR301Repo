@@ -55,10 +55,10 @@ class TurtleDrawer(AbstractDrawer):
         # look up table for pen colour
         self.pen_colour = {1: 'black', 2: 'red', 3: 'blue'}
 
-    @staticmethod
-    def shutdown():
+    def shutdown(self):
         print('No longer using Turtle Drawer')
-        turtle.Screen().bye()
+        self.clear()
+        self.turtle = None
 
     def select_pen(self, pen_num):
         print(f'Selected pen {pen_num}')
