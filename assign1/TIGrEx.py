@@ -55,21 +55,21 @@ class TIGrEx(cmd.Cmd):
     >>> app.do_drawer('turtle')
     Now using Turtle Drawer
     >>> app.do_pen(2)
-    Selected pen 2
+    Selected pen 2.0
     >>> app.do_x(5)
-    Gone to X=5
+    Gone to X=5.0
     >>> app.do_y(5)
-    Gone to Y=5
+    Gone to Y=5.0
     >>> app.do_down()
     Pen down
     >>> app.do_east(50)
-    drawing line of length 50 at 0 degrees
+    drawing line of length 50.0 at 0 degrees
     >>> app.do_north(50)
-    drawing line of length 50 at 90 degrees
+    drawing line of length 50.0 at 90 degrees
     >>> app.do_west(50)
-    drawing line of length 50 at 180 degrees
+    drawing line of length 50.0 at 180 degrees
     >>> app.do_south(50)
-    drawing line of length 50 at 270 degrees
+    drawing line of length 50.0 at 270 degrees
     >>> app.do_up()
     Pen lifted
 
@@ -90,16 +90,16 @@ class TIGrEx(cmd.Cmd):
 
     End doctest
     # """
-    intro = 'Welcome to Extended Tiny Interpreted Graphics.\n' \
-            'Use "drawer" command to choose graphics library.\n' \
-            'Enter ? for help.'
-    prompt = 'TIGrEx >: '
 
     def __init__(self):
         super().__init__()
         self.drawer = None
         self.parser = None
         self.source_reader = None
+        self.intro = 'Welcome to Extended Tiny Interpreted Graphics.\n' \
+                     'Use "drawer" command to choose graphics library.\n' \
+                     'Enter ? for help.'
+        self.prompt = 'TIGrEx >: '
 
     def setup(self, drawer):
         # Generic setup for classes
@@ -121,70 +121,52 @@ text, turtle
         else:
             print('Please select a valid drawer.')
 
+    # changed all the do_ methods path to call parser.parse
     def do_clear(self, arg=None):
         del arg
-        if self.drawer_check():
-            self.parser.draw_clear()
+        self.parser.parse({'clear'})
 
     def do_up(self, arg=None):
         """Stop drawing.
 -----"""
         del arg
-        if self.drawer_check():
-            self.parser.draw_pen_up()
+        self.parser.parse({'up'})
 
     def do_down(self, arg=None):
         """Start drawing.
 -----"""
         del arg
-        if self.drawer_check():
-            self.parser.draw_pen_down()
+        self.parser.parse({'down'})
 
     def do_north(self, arg):
         """Draw north by a specified amount.
 -----"""
-        if self.drawer_check() and self.data_check(arg):
-            self.parser.data = int(arg)
-            self.parser.command = 'north'
-            self.parser.draw_line_data(self.parser.data)
+        self.parser.parse({'north ' + str(arg)})
 
     def do_south(self, arg):
         """Draw south by a specified amount.
 -----"""
-        if self.drawer_check() and self.data_check(arg):
-            self.parser.data = int(arg)
-            self.parser.command = 'south'
-            self.parser.draw_line_data(self.parser.data)
+        self.parser.parse({'south ' + str(arg)})
 
     def do_east(self, arg):
         """Draw east by a specified amount.
 -----"""
-        if self.drawer_check() and self.data_check(arg):
-            self.parser.data = int(arg)
-            self.parser.command = 'east'
-            self.parser.draw_line_data(self.parser.data)
+        self.parser.parse({'east ' + str(arg)})
 
     def do_west(self, arg):
         """Draw west by a specified amount.
 -----"""
-        if self.drawer_check() and self.data_check(arg):
-            self.parser.data = int(arg)
-            self.parser.command = 'west'
-            self.parser.draw_line_data(self.parser.data)
+        self.parser.parse({'west ' + str(arg)})
 
     def do_x(self, arg):
         """Set X position of the pen.
 -----"""
-        if self.drawer_check() and self.data_check(arg):
-            self.parser.data = int(arg)
-            self.parser.draw_goto_x(self.parser.data)
+        self.parser.parse({'x ' + str(arg)})
 
     def do_y(self, arg):
         """Set Y position of the pen.
 -----"""
-        if self.drawer_check() and self.data_check(arg):
-            self.parser.data = int(arg)
-            self.parser.draw_goto_y(self.parser.data)
+        self.parser.parse({'y ' + str(arg)})
 
     def do_pen(self, arg):
         """Select preset pen.
@@ -193,51 +175,43 @@ Preset pens:
 2 - colour red, size 10
 3 - colour blue, size 10
 -----"""
-        if self.drawer_check() and self.data_check(arg):
-            self.parser.data = int(arg)
-            self.parser.draw_select_pen(self.parser.data)
+        self.parser.parse({'pen ' + str(arg)})
 
     def do_run(self, arg):
         """Load a script and run it.
 -----"""
-        if self.drawer_check():
-            # Search for file without extension, if the file isn't found try with extension
-            # Using multi-line and case insensitive for regex search
-            # modified by Jerry Wang, this regx can not match a file name end with .tigr
-            extension_check = re.search(r'^.*(' + self.source_reader.script_extension + r')$', arg, re.M | re.I)
-            if extension_check:
-                file = arg
+        # Search for file without extension, if the file isn't found try with extension
+        # Using multi-line and case insensitive for regex search
+        # modified by Jerry Wang, this regx can not match a file name end with .tigr
+        extension_check = re.search(r'^.*(' + self.source_reader.script_extension + r')$', arg, re.M | re.I)
+        if extension_check:
+            file = arg
+        else:
+            file = arg + self.source_reader.script_extension
+        print('Running script:', file)
+        try:
+            self.source_reader.source = [line.rstrip('\n') for line in open(file)]
+        except FileNotFoundError:
+            # If file is found in search without the script extension alert that TIGr only reads .tigr scripts
+            if not extension_check:
+                print('Script not found. Enter a valid file name.')
             else:
-                file = arg + self.source_reader.script_extension
-            print('Running script:', file)
-            try:
-                self.source_reader.source = [line.rstrip('\n') for line in open(file)]
-            except FileNotFoundError:
-                # If file is found in search without the script extension alert that TIGr only reads .tigr scripts
-                if not extension_check:
-                    print('Script not found. Enter a valid file name.')
-                else:
-                    print(f'Script not found.TIGrEx only reads {self.source_reader.script_extension} files as scripts.')
-            else:
-                # Start parsing the script
-                self.source_reader.file_name = arg
-                self.source_reader.go()
+                print(f'Script not found.TIGrEx only reads {self.source_reader.script_extension} files as scripts.')
+        else:
+            # Start parsing the script
+            self.source_reader.file_name = arg
+            self.source_reader.go()
 
     # extract error check into two new methods  ---- Duplicated Code
-    def drawer_check(self):
+    """I realized that the way I refactored code caused another duplication bad smell
+    So I put Drawer check in precmd and all data check in parser.parse where it meant to be
+    """
+    def precmd(self, line):
         if self.drawer is None:
-            print("Please select a drawer before trying to run drawer commands.")
-            return False
-        else:
-            return True
-
-    @staticmethod
-    def data_check(arg):
-        if arg == '' or re.search(r'[^0-9]', str(arg), re.M | re.I):
-            print('This command only takes numbers')
-            return False
-        else:
-            return True
+            self.drawer = TextDrawer()
+            print('setup TextDrawer as default Drawer as no drawer has been found,\n'
+                  'use Drawer command to change drawer!')
+        return cmd.Cmd.precmd(self, line)
 
     @staticmethod
     def do_quit(arg):
@@ -252,11 +226,6 @@ Preset pens:
 -----"""
         del arg
         exit()
-
-    @staticmethod
-    def parse(arg):
-        # Convert arg to a tuple
-        return tuple(map(int, arg.split()))
 
 
 if __name__ == '__main__':

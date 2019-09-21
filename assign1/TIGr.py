@@ -1,6 +1,5 @@
-"""Tiny Interpreted Graphics = TIGr
-Keep the interfaces defined below in your work.
-"""
+# Keep the interfaces defined below in your work.
+
 from abc import ABC, abstractmethod
 
 

@@ -56,61 +56,39 @@ class Parser(AbstractParser):
                                 'e|east': 0,
                                 'w|west': 180,
                                 's|south': 270}
-        self.commands = {'p|pen': self.draw_select_pen,
-                         'u|up': self.draw_pen_up,
-                         'd|down': self.draw_pen_down,
-                         'n|north': self.draw_line_data,
-                         'e|east': self.draw_line_data,
-                         's|south': self.draw_line_data,
-                         'w|west': self.draw_line_data,
-                         'x': self.draw_goto_x,
-                         'y': self.draw_goto_y}
+        self.commands = {'p|pen': self.drawer.select_pen,
+                         'u|up': self.drawer.pen_up,
+                         'd|down': self.drawer.pen_down,
+                         'n|north': self.drawer.draw_line,
+                         'e|east': self.drawer.draw_line,
+                         's|south': self.drawer.draw_line,
+                         'w|west': self.drawer.draw_line,
+                         'x': self.drawer.go_along,
+                         'y': self.drawer.go_down,
+                         'clear': self.drawer.clear}
 
-    def draw_clear(self, data=None):
-        del data
-        self.drawer.clear()
-
-    def draw_select_pen(self, data):
-        self.drawer.select_pen(data)
-
-    def draw_pen_down(self, data=None):
-        del data
-        self.drawer.pen_down()
-
-    def draw_pen_up(self, data=None):
-        del data
-        self.drawer.pen_up()
-
-    def draw_line_data(self, data=None):
-        del data
-        # Parse drawer specific command through alias and command tables
-        # Multi-line case insensitive regex
-        for alias in self.commands:
-            if re.search(r'^.*(' + alias + r')$', self.command, re.M | re.I):
-                self.drawer.draw_line(self.direction_table[alias], self.data)
-                break
-
-    def draw_goto_x(self, data):
-        self.drawer.go_along(data)
-
-    def draw_goto_y(self, data):
-        self.drawer.go_down(data)
-
+    # delete the methods that perform only one action and delegating work to Drawer class. Middle man bad smell
     def parse(self, raw_source):
-        self.source = raw_source
-
-        # Loop through each line in source and separate the command form the arguments
-        # Lookup command through alias and command tables and execute
-        # Multi-line case insensitive regex
-        for source_line in self.source:
+        for source_line in raw_source:
             self.command = source_line.split(' ', 1)[0].lower()
-
+            # extract data error check and move it here
             if ' ' in source_line:
-                self.data = float(source_line.split(' ')[1])
-
+                try:
+                    self.data = float(source_line.split(' ')[1])
+                except ValueError:
+                    print('This command only takes numbers')
+                    return
+            else:
+                self.data = None
             for alias in self.commands:
-                if re.search(r'^.*(' + alias + r')$', self.command, re.M | re.I):
-                    self.commands[alias](self.data)
+                # changed regx,resolved that alias 'p|pen' can match command 'up'
+                if re.match(r'(' + alias + r')', self.command, re.M | re.I):
+                    if self.data is None:
+                        self.commands[alias]()
+                    elif alias in self.direction_table:
+                        self.commands[alias](self.direction_table[alias], self.data)
+                    else:
+                        self.commands[alias](self.data)
                     break
 
 
